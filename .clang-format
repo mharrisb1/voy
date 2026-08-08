@@ -1,0 +1,39 @@
+---
+BasedOnStyle: Google
+Language: Cpp
+Standard: Latest
+
+# Layout & Indentation
+ColumnLimit: 100
+IndentWidth: 2
+TabWidth: 2
+UseTab: Never
+
+# Braces & Formatting
+BreakBeforeBraces: Attach
+AllowShortFunctionsOnASingleLine: Inline
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: false
+FixNamespaceComments: true
+SpacesBeforeTrailingComments: 2
+
+# Include Categorization & Sorting
+SortIncludes: CaseSensitive
+IncludeBlocks: Regroup
+IncludeCategories:
+  # 1. Main header corresponding to the source file
+  - Regex: '^"(voy/.*)"'
+    Priority: 1
+  # 2. Project headers (<voy/...>)
+  - Regex: '^<voy/.*'
+    Priority: 2
+  # 3. C++ standard library (<...> headers)
+  - Regex: '^<[a-z0-9_]+>'
+    Priority: 3
+  # 4. Linux POSIX/system headers (<sys/..., <unistd.h>, etc.)
+  - Regex: '^<.*'
+    Priority: 4
+  # 5. Other includes
+  - Regex: '.*'
+    Priority: 5
+...
