@@ -32,3 +32,27 @@ add_library(voy_lib STATIC
 )
 target_include_directories(voy_lib PUBLIC include)
 target_compile_options(voy_lib PRIVATE ${VOY_WARNING_FLAGS})
+
+include(FetchContent)
+FetchContent_Declare(
+  doctest
+  GIT_REPOSITORY https://github.com/doctest/doctest.git
+)
+FetchContent_MakeAvailable(doctest)
+
+enable_testing()
+
+add_executable(voy_tests
+  test/test_main.cpp
+  test/test_event.cpp
+)
+
+target_link_libraries(voy_tests
+  PRIVATE
+    voy_lib
+    doctest::doctest
+)
+
+target_compile_options(voy_tests PRIVATE ${VOY_WARNING_FLAGS})
+
+add_test(NAME voy_tests COMMAND voy_tests)
