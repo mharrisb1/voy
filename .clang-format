@@ -11,11 +11,18 @@ UseTab: Never
 
 # Braces & Formatting
 BreakBeforeBraces: Attach
+AllowShortBlocksOnASingleLine: Always
 AllowShortFunctionsOnASingleLine: Inline
-AllowShortIfStatementsOnASingleLine: Never
+AllowShortIfStatementsOnASingleLine: WithoutElse
+AllowShortCaseLabelsOnASingleLine: true
 AllowShortLoopsOnASingleLine: false
 FixNamespaceComments: true
 SpacesBeforeTrailingComments: 2
+
+# Alignment
+AlignConsecutiveAssignments: true
+AlignConsecutiveDeclarations: true
+AlignConsecutiveMacros: true
 
 # Include Categorization & Sorting
 SortIncludes: CaseSensitive
