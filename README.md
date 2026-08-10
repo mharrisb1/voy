@@ -3,7 +3,7 @@
 > [!CAUTION]
 > Pre-alpha
 
-Voy is a lightweight, embeddable filesystem event pipeline and multi-route orchestrator. Similar to tools like [Watchman](https://github.com/facebook/watchman), [Watchexec](https://github.com/watchexec/watchexec), and [entr](ihttps://github.com/eradman/entr), Voy watches files for events and optionally executes commands in response to those events. Where Voy shines is:
+Voy is a lightweight, embeddable filesystem event pipeline and multi-route orchestrator. Similar to tools like [Watchman](https://github.com/facebook/watchman), [Watchexec](https://github.com/watchexec/watchexec), and [entr](https://github.com/eradman/entr), Voy watches files for events and optionally executes commands in response to those events. Where Voy shines is:
 
 - Small bundle size
 - Foreground or background (daemon) command execution
