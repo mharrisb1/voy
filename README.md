@@ -13,12 +13,13 @@ Voy is a lightweight, embeddable filesystem event pipeline and multi-route orche
 
 ## Feature Matrix
 
-| Tool      | Embeddable | Foreground Execution | Background Execution | Parameters | Built-in Globbing |
-| --------- | ---------- | -------------------- | -------------------- | ---------- | ----------------- |
-| Voy       | Yes        | Yes                  | Yes                  | Yes        | Yes               |
-| Watchman  | No         | No                   | Yes                  | Yes[^1]    | Yes               |
-| Watchexec | Yes        | Yes                  | No                   | Yes[^1]    | Yes               |
-| entr      | No         | Yes                  | No                   | Yes[^2]    | No                |
+| Feature              | Voy | Watchman | Watchexec | entr    |
+| -------------------- | --- | -------- | --------- | ------- |
+| Embeddable           | Yes | No       | Yes       | No      |
+| Foreground Execution | Yes | No       | Yes       | Yes     |
+| Background Execution | Yes | Yes      | No        | No      |
+| Parameters           | Yes | Yes[^1]  | Yes[^1]   | Yes[^2] |
+| Built-in Globbing    | Yes | Yes      | Yes       | No      |
 
 [^1]: Only through environment variables
 
