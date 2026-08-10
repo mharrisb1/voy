@@ -4,8 +4,7 @@
 
 #include <sys/inotify.h>
 
-namespace voy {
-namespace event {
+namespace voy::event {
 
 std::string_view to_string(EventType type) noexcept {
   switch (type) {
@@ -111,5 +110,4 @@ uint32_t to_inotify_mask(EventType type) noexcept {
   return mask;
 }
 
-}  // namespace event
-}  // namespace voy
+}  // namespace voy::event

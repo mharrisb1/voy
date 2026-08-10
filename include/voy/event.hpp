@@ -1,13 +1,14 @@
 #pragma once
 
+#include <chrono>
 #include <cstdint>
+#include <filesystem>
 #include <optional>
 #include <string>
 #include <string_view>
 #include <vector>
 
-namespace voy {
-namespace event {
+namespace voy::event {
 
 enum class EventType : uint32_t {
   None       = 0,
@@ -58,17 +59,19 @@ consteval EventType& operator^=(EventType& a, EventType b) noexcept {
   return (mask & flag) != EventType::None;
 }
 
-[[nodiscard]] std::string_view to_string(EventType type) noexcept;
-
-[[nodiscard]] std::string to_composite_string(EventType mask);
-
+[[nodiscard]] std::string_view         to_string(EventType type) noexcept;
+[[nodiscard]] std::string              to_composite_string(EventType mask);
 [[nodiscard]] std::optional<EventType> from_string(std::string_view str) noexcept;
-
 [[nodiscard]] std::optional<EventType> from_strings(std::vector<std::string>& strings) noexcept;
+[[nodiscard]] EventType                from_inotify_mask(uint32_t mask) noexcept;
+[[nodiscard]] uint32_t                 to_inotify_mask(EventType type) noexcept;
 
-[[nodiscard]] EventType from_inotify_mask(uint32_t mask) noexcept;
+struct Event {
+  std::filesystem::path                 path;
+  EventType                             type{EventType::None};
+  uint32_t                              raw_inotify_mask{0};
+  uint32_t                              cookie{0};
+  std::chrono::system_clock::time_point timestamp{std::chrono::system_clock::now()};
+};
 
-[[nodiscard]] uint32_t to_inotify_mask(EventType type) noexcept;
-
-}  // namespace event
-}  // namespace voy
+}  // namespace voy::event
