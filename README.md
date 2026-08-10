@@ -20,5 +20,6 @@ Voy is a lightweight, embeddable filesystem event pipeline and multi-route orche
 | Watchexec | Yes        | Yes                  | No                   | Yes[^1]    | Yes               |
 | entr      | No         | Yes                  | No                   | Yes[^2]    | No                |
 
-[^1] Only through environment variables
-[^2] Only supports absolute path
+[^1]: Only through environment variables
+
+[^2]: Only supports absolute path
