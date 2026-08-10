@@ -31,6 +31,7 @@ add_library(voy_lib STATIC
   src/config.cpp
   src/event.cpp
   src/glob.cpp
+  src/reactor.cpp
 )
 target_include_directories(voy_lib PUBLIC include)
 target_compile_options(voy_lib PRIVATE ${VOY_WARNING_FLAGS})
