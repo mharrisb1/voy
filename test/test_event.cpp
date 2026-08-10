@@ -16,3 +16,17 @@ TEST_CASE("EventType String Conversion (Round-Trip)") {
     CHECK(round_trip(type));
   }
 }
+
+TEST_CASE("EventType Composite String") {
+  auto mask1 = EventType::Attrib;
+  CHECK(to_composite_string(mask1) == "attrib");
+
+  auto mask2 = EventType::Attrib | EventType::Create;
+  CHECK(to_composite_string(mask2) == "create|attrib");
+
+  auto mask3 = EventType::None;
+  CHECK(to_composite_string(mask3) == "none");
+
+  auto mask4 = EventType::All;
+  CHECK(to_composite_string(mask4) == "all");
+}
