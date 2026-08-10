@@ -22,6 +22,8 @@ Voy is a lightweight, embeddable filesystem event pipeline and multi-route orche
 | Built-in Globbing[^3]      | Yes | Yes      | Yes       | No      |
 | Recursive Traversal        | Yes | Yes      | Yes       | No      |
 | Dynamic Directory Watching | Yes | Yes      | Yes       | No      |
+| Multi-OS Support           | No  | Yes      | Yes       | Yes     |
+| Naive Polling (Fallback)   | No  | Yes      | Yes       | Yes     |
 
 [^1]: Only through environment variables
 
