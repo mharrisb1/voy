@@ -13,20 +13,22 @@ Voy is a lightweight, embeddable filesystem event pipeline and multi-route orche
 
 ## Feature Matrix
 
-| Feature                    | Voy | Watchman | Watchexec | entr    |
-| -------------------------- | --- | -------- | --------- | ------- |
-| Embeddable                 | Yes | No       | Yes       | No      |
-| Foreground Execution       | Yes | No       | Yes       | Yes     |
-| Background Execution       | Yes | Yes      | No        | No      |
-| Parameters                 | Yes | Yes[^1]  | Yes[^1]   | Yes[^2] |
-| Built-in Globbing[^3]      | Yes | Yes      | Yes       | No      |
-| Recursive Traversal        | Yes | Yes      | Yes       | No      |
-| Dynamic Directory Watching | Yes | Yes      | Yes       | No      |
-| Multi-OS Support           | No  | Yes      | Yes       | Yes     |
-| Naive Polling (Fallback)   | No  | Yes      | Yes       | Yes     |
+| Feature                      | Voy | Watchman | Watchexec | entr    |
+| ---------------------------- | --- | -------- | --------- | ------- |
+| Embeddable                   | Yes | No       | Yes       | No      |
+| Foreground Execution         | Yes | No       | Yes       | Yes     |
+| Background Execution         | Yes | Yes      | No        | No      |
+| Parameters                   | Yes | Yes[^1]  | Yes[^1]   | Yes[^2] |
+| Built-in Globbing[^3]        | Yes | Yes      | Yes       | No      |
+| Recursive Traversal          | Yes | Yes      | Yes       | No      |
+| Dynamic Directory Watching   | Yes | Yes      | Yes       | No      |
+| Multi-OS Support             | No  | Yes      | Yes       | Yes     |
+| Naive Polling (Fallback)[^4] | No  | Yes      | Yes       | Yes     |
 
 [^1]: Only through environment variables
 
 [^2]: Only supports absolute path
 
 [^3]: I actually appreciate `entr` treating this as an anti-feature
+
+[^4]: Allows support for non-standard filesystems like networked FS
