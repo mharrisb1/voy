@@ -32,3 +32,14 @@ Voy is a lightweight, embeddable filesystem event pipeline and multi-route orche
 [^3]: I actually appreciate `entr` treating this as an anti-feature
 
 [^4]: Allows support for non-standard filesystems like networked FS
+
+## Installation
+
+> [!WARNING]
+> Here be dragons
+
+### Build From Source
+
+```bash
+cmake -B build
+```
