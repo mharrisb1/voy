@@ -9,7 +9,6 @@
 #include <cstring>
 #include <utility>
 
-#include <bits/types/sigset_t.h>
 #include <linux/limits.h>
 #include <sys/epoll.h>
 #include <sys/inotify.h>
@@ -39,6 +38,7 @@ std::expected<Reactor, std::string> Reactor::create() {
   sigemptyset(&mask);
   sigaddset(&mask, SIGINT);
   sigaddset(&mask, SIGTERM);
+  sigaddset(&mask, SIGCHLD);
 
   if (sigprocmask(SIG_BLOCK, &mask, nullptr) == 1) {
     close(inotify_fd);
@@ -115,7 +115,7 @@ void Reactor::stop() {
   running_ = false;
 }
 
-void Reactor::run(EventCallback on_event) {
+void Reactor::run(EventCallback on_event, SignalCallback on_sigchld) {
   running_ = true;
   struct epoll_event events[MAX_EPOLL_EVENTS];
 
@@ -132,7 +132,15 @@ void Reactor::run(EventCallback on_event) {
         handle_inotify_events(on_event);
       } else if (events[i].data.fd == signal_fd_) {
         struct signalfd_siginfo siginfo;
-        if (read(signal_fd_, &siginfo, sizeof(siginfo)) == sizeof(siginfo)) { stop(); }
+        if (read(signal_fd_, &siginfo, sizeof(siginfo)) == sizeof(siginfo)) {
+          switch (siginfo.ssi_signo) {
+            case SIGCHLD:
+              if (on_sigchld) on_sigchld();
+              break;
+            case SIGINT:
+            case SIGTERM: stop(); break;
+          }
+        }
       }
     }
   }

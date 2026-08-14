@@ -33,6 +33,7 @@ add_library(voy_lib STATIC
   src/event.cpp
   src/glob.cpp
   src/pipeline.cpp
+  src/process.cpp
   src/reactor.cpp
   src/router.cpp
   src/watch_tree.cpp

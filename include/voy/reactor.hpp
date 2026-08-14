@@ -10,7 +10,8 @@ namespace voy::reactor {
 
 class Reactor {
  public:
-  using EventCallback = std::function<void(const event::Event&)>;
+  using EventCallback  = std::function<void(const event::Event&)>;
+  using SignalCallback = std::function<void()>;
 
   [[nodiscard]] static std::expected<Reactor, std::string> create();
 
@@ -23,7 +24,7 @@ class Reactor {
 
   std::expected<int, std::string> add_watch(const std::string& dir, event::EventType mask);
 
-  void run(EventCallback on_event);
+  void run(EventCallback on_event, SignalCallback on_sigchld = nullptr);
   void stop();
 
  private:
