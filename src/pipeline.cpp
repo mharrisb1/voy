@@ -8,7 +8,7 @@ namespace voy::pipeline {
 namespace fs = std::filesystem;
 
 std::unordered_map<std::string, std::string> Pipeline::prepare_environment(
-    const config::RouteConfig& route, std::vector<event::Event>& matched_events) {
+    const config::RouteConfig& route, const std::vector<event::Event>& matched_events) {
   std::unordered_map<std::string, std::string> env = route.action.env;
 
   if (matched_events.empty()) return env;

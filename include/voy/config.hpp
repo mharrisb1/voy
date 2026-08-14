@@ -1,10 +1,11 @@
 #pragma once
 
-#include "voy/event.hpp"
+#include <voy/event.hpp>
 
 #include <cstdint>
 #include <expected>
 #include <filesystem>
+#include <functional>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -12,6 +13,8 @@
 #include <nlohmann/json.hpp>
 
 namespace voy::config {
+
+using NativeCallback = std::function<void(const std::vector<event::Event>&)>;
 
 struct ActionConfig {
   std::string                                  command;
@@ -27,6 +30,7 @@ struct RouteConfig {
   std::vector<std::string> ignore;
   event::EventType         events{event::EventType::All};
   ActionConfig             action;
+  NativeCallback           callback;
 };
 
 struct VoyConfig {

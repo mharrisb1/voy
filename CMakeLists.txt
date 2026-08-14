@@ -30,6 +30,7 @@ set(VOY_WARNING_FLAGS
 add_library(voy_lib STATIC
   src/config.cpp
   src/debounce.cpp
+  src/engine.cpp
   src/event.cpp
   src/glob.cpp
   src/pipeline.cpp

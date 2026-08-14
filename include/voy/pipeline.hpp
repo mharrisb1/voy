@@ -12,7 +12,7 @@ namespace voy::pipeline {
 class Pipeline {
  public:
   [[nodiscard]] static std::unordered_map<std::string, std::string> prepare_environment(
-      const config::RouteConfig& route, std::vector<event::Event>& matched_events);
+      const config::RouteConfig& route, const std::vector<event::Event>& matched_events);
 };
 
 }  // namespace voy::pipeline
