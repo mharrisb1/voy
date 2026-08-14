@@ -53,8 +53,6 @@ For each process created by Voy, the following environment variables are passed 
 | `VOY_EVENT_TIME` | Original timestamp of the event (ISO)                |
 | `VOY_EVENT_PATH` | Absolute path of file or subdirectory                |
 
-| `VOY_EVT
-
 ### A Note on Batch Size
 
 The `VOY_BATCH_SIZE` value is provided because currently we do not support reporting all events in a window through parameters. We need to come up with a good solution for this that avoids potential issues with max environment variable size. Right now, we just report the first event from the observed window but the batch size allows the user to create a script that will do something different if the batch size is larger than one.
