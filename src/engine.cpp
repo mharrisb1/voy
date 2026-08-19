@@ -15,7 +15,7 @@
 
 #include <sys/inotify.h>
 
-namespace voy {
+namespace voy::engine {
 
 ActionBuilder Action::builder() {
   return ActionBuilder();
@@ -154,4 +154,4 @@ void Engine::stop() {
   if (reactor_) reactor_->stop();
 }
 
-}  // namespace voy
+}  // namespace voy::engine

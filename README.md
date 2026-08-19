@@ -47,9 +47,7 @@ Using `libvoy` over other options like [chokidar](https://github.com/paulmillr/c
 #include <voy/voy.h>
 
 namespace Renderer {
-  void compile_and_inject_shader(const std::string& shader_path) {
-    // This work must happen instantly with no FFI boundaries, no IPC, and no Python bridges.
-  }
+  void compile_and_inject_shader(const std::string& shader_path) {...}
 }
 
 int main() {
@@ -59,7 +57,7 @@ int main() {
       .watch("assets/shaders/**/*.frag")
       .watch("assets/shaders/**/*.vert")
       .on_events(voy::EventType::Modify)
-      .with_callback([](const std::vector<voy::event::Event>& events) {
+      .with_callback([](const std::vector<voy::Event>& events) {
         for (const auto& evt : events) {
           Renderer::compile_and_inject_shader(evt.path.string());
         }

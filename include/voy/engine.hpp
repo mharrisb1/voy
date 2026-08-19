@@ -14,7 +14,7 @@
 #include <optional>
 #include <string>
 
-namespace voy {
+namespace voy::engine {
 
 class ActionBuilder;
 class RouteBuilder;
@@ -94,4 +94,4 @@ class EngineBuilder {
   config::VoyConfig config_;
 };
 
-}  // namespace voy
+}  // namespace voy::engine
