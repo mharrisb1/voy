@@ -7,6 +7,7 @@
 #include <csignal>
 #include <cstddef>
 #include <cstring>
+#include <expected>
 #include <utility>
 
 #include <linux/limits.h>
@@ -84,7 +85,8 @@ Reactor::Reactor(Reactor&& other) noexcept
       epoll_fd_(std::exchange(other.epoll_fd_, -1)),
       signal_fd_(std::exchange(other.signal_fd_, -1)),
       running_(std::exchange(other.running_, false)),
-      wd_to_path_(other.wd_to_path_) {}
+      wd_to_path_(other.wd_to_path_),
+      custom_fds_(std::move(other.custom_fds_)) {}
 
 Reactor& Reactor::operator=(Reactor&& other) noexcept {
   if (this != &other) {
@@ -97,6 +99,7 @@ Reactor& Reactor::operator=(Reactor&& other) noexcept {
     signal_fd_  = std::exchange(other.signal_fd_, -1);
     running_    = std::exchange(other.running_, false);
     wd_to_path_ = std::move(other.wd_to_path_);
+    custom_fds_ = std::move(other.custom_fds_);
   }
   return *this;
 }
@@ -109,6 +112,24 @@ std::expected<int, std::string> Reactor::add_watch(const std::string& dir, event
 
   wd_to_path_[wd] = dir;
   return wd;
+}
+
+std::expected<void, std::string> Reactor::add_fd(int fd, FdCallback on_ready) {
+  struct epoll_event ev{};
+  ev.events  = EPOLLIN | EPOLLET;
+  ev.data.fd = fd;
+
+  if (epoll_ctl(epoll_fd_, EPOLL_CTL_ADD, fd, &ev) == -1) {
+    return std::unexpected("epoll_ctl add_fd failed: " + std::string(strerror(errno)));
+  }
+
+  custom_fds_[fd] = std::move(on_ready);
+  return {};
+}
+
+void Reactor::remove_fd(int fd) {
+  epoll_ctl(epoll_fd_, EPOLL_CTL_DEL, fd, nullptr);
+  custom_fds_.erase(fd);
 }
 
 void Reactor::stop() {
@@ -141,6 +162,9 @@ void Reactor::run(EventCallback on_event, SignalCallback on_sigchld) {
             case SIGTERM: stop(); break;
           }
         }
+      } else {
+        auto it = custom_fds_.find(events[i].data.fd);
+        if (it != custom_fds_.end()) it->second(events[i].data.fd);
       }
     }
   }

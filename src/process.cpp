@@ -6,6 +6,7 @@
 #include <cstring>
 #include <print>
 
+#include <fcntl.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
@@ -40,19 +41,34 @@ void ProcessSupervisor::reap_zombies() {
   }
 }
 
-void ProcessSupervisor::spawn(const config::ActionConfig&                         action,
-                              const std::unordered_map<std::string, std::string>& env_map) {
+std::expected<ProcessPipes, std::string> ProcessSupervisor::spawn(
+    const config::ActionConfig& action, const std::unordered_map<std::string, std::string>& env_map) {
   if (is_running()) kill_all();
+
+  int out_pipe[2];
+  int err_pipe[2];
+
+  if (pipe2(out_pipe, O_NONBLOCK | O_CLOEXEC) == -1 ||
+      pipe2(err_pipe, O_NONBLOCK | O_CLOEXEC) == -1) {
+    return std::unexpected(std::string("[voy] Failed to create pipes: ") + strerror(errno));
+  }
 
   pid_t pid = fork();
 
   if (pid < 0) {
-    std::println(stderr, "[voy] Failed to fork new process: {}", strerror(errno));
-    return;
+    return std::unexpected(std::string("[voy] Failed to fork new process: ") + strerror(errno));
   }
 
   if (pid == 0) {
     setpgid(0, 0);
+
+    dup2(out_pipe[1], STDOUT_FILENO);
+    dup2(err_pipe[1], STDERR_FILENO);
+
+    close(out_pipe[0]);
+    close(out_pipe[1]);
+    close(err_pipe[0]);
+    close(err_pipe[1]);
 
     if (chdir(action.workdir.c_str()) == -1) {
       std::println(stderr, "[voy] Failed to chdir to {}", action.workdir);
@@ -72,6 +88,11 @@ void ProcessSupervisor::spawn(const config::ActionConfig&                       
     _exit(1);
   } else {
     pgid_ = pid;
+    close(out_pipe[1]);
+    close(err_pipe[1]);
+
+    // Return the read-ends back to the Engine
+    return ProcessPipes{out_pipe[0], err_pipe[0]};
   }
 }
 

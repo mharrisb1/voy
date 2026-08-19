@@ -53,6 +53,12 @@ namespace Renderer {
 int main() {
   auto engine = voy::Engine::builder()
     .with_debounce_window(std::chrono::milliseconds(10))
+    .on_stdout([](std::string_view chunk) {
+      std::cout << chunk;
+    })
+    .on_stderr([](std::string_view chunk) {
+      std::cerr << "\033[31m[voy error]\033[0m " << chunk;
+    })
     .add_route(voy::Route::builder("shader_hot_reload")
       .watch("assets/shaders/**/*.frag")
       .watch("assets/shaders/**/*.vert")

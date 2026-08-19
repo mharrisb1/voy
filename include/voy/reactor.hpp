@@ -12,6 +12,7 @@ class Reactor {
  public:
   using EventCallback  = std::function<void(const event::Event&)>;
   using SignalCallback = std::function<void()>;
+  using FdCallback     = std::function<void(int)>;
 
   [[nodiscard]] static std::expected<Reactor, std::string> create();
 
@@ -22,7 +23,9 @@ class Reactor {
   Reactor(Reactor&& other) noexcept;
   Reactor& operator=(Reactor&& other) noexcept;
 
-  std::expected<int, std::string> add_watch(const std::string& dir, event::EventType mask);
+  std::expected<int, std::string>  add_watch(const std::string& dir, event::EventType mask);
+  std::expected<void, std::string> add_fd(int fd, FdCallback on_ready);
+  void                             remove_fd(int fd);
 
   void run(EventCallback on_event, SignalCallback on_sigchld = nullptr);
   void stop();
@@ -37,6 +40,7 @@ class Reactor {
   int                                  signal_fd_{-1};
   bool                                 running_{false};
   std::unordered_map<int, std::string> wd_to_path_;
+  std::unordered_map<int, FdCallback>  custom_fds_;
 };
 
 }  // namespace voy::reactor

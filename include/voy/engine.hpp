@@ -1,5 +1,6 @@
 #pragma once
 
+#include <voy/buffer.hpp>
 #include <voy/config.hpp>
 #include <voy/debounce.hpp>
 #include <voy/event.hpp>
@@ -65,7 +66,9 @@ class Engine {
  public:
   static EngineBuilder builder();
 
-  static std::expected<Engine, std::string> create(const config::VoyConfig& config);
+  static std::expected<Engine, std::string> create(const config::VoyConfig&              config,
+                                                   std::function<void(std::string_view)> on_stdout,
+                                                   std::function<void(std::string_view)> on_stderr);
 
   void run();
   void stop();
@@ -73,25 +76,35 @@ class Engine {
  private:
   Engine(const config::VoyConfig& config, std::unique_ptr<reactor::Reactor> reactor,
          watch_tree::WatchTree watch_tree, debounce::Debouncer debouncer, router::Router router,
-         process::ProcessSupervisor supervisor);
+         process::ProcessSupervisor supervisor, std::function<void(std::string_view)> on_stdout,
+         std::function<void(std::string_view)> on_stderr);
 
   config::VoyConfig                 config_;
   std::unique_ptr<reactor::Reactor> reactor_;
-  watch_tree::WatchTree             watch_tree;
+  watch_tree::WatchTree             watch_tree_;
   debounce::Debouncer               debouncer_;
   router::Router                    router_;
   process::ProcessSupervisor        supervisor_;
+  buffer::RingBuffer                stdout_ring_{10000};  // Holds last 10,000 chunks
+  buffer::RingBuffer                stderr_ring_{10000};
+
+  std::function<void(std::string_view)> on_stdout_;
+  std::function<void(std::string_view)> on_stderr_;
 };
 
 class EngineBuilder {
  public:
   EngineBuilder& with_debounce_window(std::chrono::milliseconds window);
   EngineBuilder& add_route(const config::RouteConfig& route);
+  EngineBuilder& on_stdout(std::function<void(std::string_view)> cb);
+  EngineBuilder& on_stderr(std::function<void(std::string_view)> cb);
 
   std::expected<Engine, std::string> build();
 
  private:
-  config::VoyConfig config_;
+  config::VoyConfig                     config_;
+  std::function<void(std::string_view)> on_stdout_;
+  std::function<void(std::string_view)> on_stderr_;
 };
 
 }  // namespace voy::engine
