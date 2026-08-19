@@ -10,8 +10,6 @@
 #include <unordered_map>
 #include <vector>
 
-#include <nlohmann/json.hpp>
-
 namespace voy::config {
 
 using NativeCallback = std::function<void(const std::vector<event::Event>&)>;
@@ -37,16 +35,6 @@ struct VoyConfig {
   uint8_t                  version{1u};
   uint32_t                 debounce_ms{150};
   std::vector<RouteConfig> routes;
-
-  [[nodiscard]] static std::expected<VoyConfig, std::string> from_file(
-      const std::filesystem::path& path);
 };
-
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ActionConfig, command, workdir, env,
-                                                pgroup_isolation, cooldown_ms)
-
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(RouteConfig, name, watch, ignore, events, action)
-
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(VoyConfig, version, debounce_ms, routes)
 
 }  // namespace voy::config

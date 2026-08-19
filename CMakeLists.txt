@@ -28,7 +28,7 @@ set(VOY_WARNING_FLAGS
 )
 
 add_library(voy_lib STATIC
-  src/config.cpp
+  src/buffer.cpp
   src/debounce.cpp
   src/engine.cpp
   src/event.cpp
@@ -42,19 +42,19 @@ add_library(voy_lib STATIC
 target_include_directories(voy_lib PUBLIC include)
 target_compile_options(voy_lib PRIVATE ${VOY_WARNING_FLAGS})
 
-target_link_libraries(voy_lib
-  PUBLIC
-    nlohmann_json::nlohmann_json
-)
+# target_link_libraries(voy_lib
+#   PUBLIC
+#     nlohmann_json::nlohmann_json
+# )
 
 include(FetchContent)
 
-FetchContent_Declare(
-  nlohmann_json
-  GIT_REPOSITORY https://github.com/nlohmann/json.git
-  GIT_TAG v3.12.0
-)
-FetchContent_MakeAvailable(nlohmann_json)
+# FetchContent_Declare(
+#   nlohmann_json
+#   GIT_REPOSITORY https://github.com/nlohmann/json.git
+#   GIT_TAG v3.12.0
+# )
+# FetchContent_MakeAvailable(nlohmann_json)
 
 FetchContent_Declare(
   doctest
