@@ -28,11 +28,75 @@ Voy is a lightweight, embeddable filesystem event pipeline and multi-route orche
 
 ## Installation
 
-[TODO]
+Voy requires a C++23 compliant compiler (e.g., GCC 14+ or Clang 18+). You can build and install it using CMake:
+
+```bash
+git clone https://github.com/mharrisb1/voy.git
+cd voy
+cmake -B build
+cmake --build build --target voy
+sudo cp ./build/voy /usr/local/bin
+```
 
 ## CLI Usage
 
-[TODO]
+To use Voy from the command line, create a `.voy.json` configuration file in the root of your project. This file defines the routes and commands you want to execute when files change.
+
+### Example `.voy.json`
+
+```json
+{
+  "debounce_ms": 150,
+  "routes": [
+    {
+      "name": "compile_project",
+      "watch": ["src/**/*.cpp", "include/**/*.hpp"],
+      "ignore": ["build/**"],
+      "events": ["modify", "create", "delete"],
+      "action": {
+        "command": "make build",
+        "workdir": ".",
+        "env": {
+          "BUILD_ENV": "development"
+        }
+      }
+    }
+  ]
+}
+```
+
+> **Note on Globs:** Voy uses a lightweight, custom glob-to-regex engine.
+>
+> **Supported:**
+>
+> - `**` : Recursive directory matching (e.g., `src/**/*.cpp`)
+> - `*` : Any sequence of characters within a single directory (e.g., `src/*.cpp`)
+> - `?` : Any single character (e.g., `test_?.cpp`)
+>
+> **Not Supported (Escaped as literals):**
+>
+> - Brace expansion (e.g., `*.{cpp,hpp}`) - you must specify these as separate watch rules.
+> - Bracket character classes (e.g., `[a-z]*.cpp`).
+> - Extended regex syntax (e.g., `+`, `()`, `|`).
+
+### Running Voy
+
+Start the file watcher in the foreground. By default, it looks for a `voy.json` file in the current directory:
+
+```bash
+voy watch
+```
+
+You can also specify a custom configuration file path using the `--config` flag:
+
+```bash
+voy -c configs/voy.json watch
+```
+
+**Options:**
+
+- `-c, --config <file>`: Path to the JSON config file (default: `voy.json`)
+- `-h, --help`: Print the help message and exit
 
 ## Embedded Usage
 
