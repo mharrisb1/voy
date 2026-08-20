@@ -33,9 +33,7 @@ Voy requires a C++23 compliant compiler (e.g., GCC 14+ or Clang 18+). You can bu
 ```bash
 git clone https://github.com/mharrisb1/voy.git
 cd voy
-cmake -B build
-cmake --build build --target voy
-sudo cp ./build/voy /usr/local/bin
+./bin/install.sh
 ```
 
 ## CLI Usage
