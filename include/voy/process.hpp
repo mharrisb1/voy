@@ -33,8 +33,9 @@ class ProcessSupervisor {
   ProcessSupervisor() = default;
   ~ProcessSupervisor();
 
-  std::expected<ProcessPipes, std::string> spawn(const config::ActionConfig&                         action,
-                                                 const std::unordered_map<std::string, std::string>& env_map);
+  std::expected<ProcessPipes, std::string> spawn(
+      const config::ActionConfig&                         action,
+      const std::unordered_map<std::string, std::string>& env_map);
 
   void               kill_all();
   void               reap_zombies();

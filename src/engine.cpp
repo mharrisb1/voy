@@ -12,10 +12,10 @@
  */
 
 #include <voy/config.hpp>
-#include <voy/glob.hpp>
 #include <voy/debounce.hpp>
 #include <voy/engine.hpp>
 #include <voy/event.hpp>
+#include <voy/glob.hpp>
 #include <voy/pipeline.hpp>
 #include <voy/process.hpp>
 #include <voy/reactor.hpp>
@@ -188,7 +188,7 @@ void Engine::run() {
                                                    const std::vector<event::Event>& events) {
     if (route.callback) route.callback(events);
     if (!route.action.command.empty()) {
-      auto env = pipeline::Pipeline::prepare_environment(route, events);
+      auto env       = pipeline::Pipeline::prepare_environment(route, events);
       auto pipes_res = supervisor_.spawn(route.action, env);
 
       if (!pipes_res) {
@@ -226,7 +226,8 @@ void Engine::run() {
   debouncer_.set_flush_callback(
       [this](std::vector<event::Event> events) { router_.route_events(events); });
 
-  auto debouncer_res = reactor_->add_fd(debouncer_.timer_fd(), [this](int) { debouncer_.on_timer_expired(); });
+  auto debouncer_res =
+      reactor_->add_fd(debouncer_.timer_fd(), [this](int) { debouncer_.on_timer_expired(); });
   if (!debouncer_res) {
     std::string err = "[voy] Failed to monitor debouncer timer: " + debouncer_res.error() + "\n";
     stderr_ring_.push(err);

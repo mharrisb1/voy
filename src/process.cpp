@@ -55,7 +55,8 @@ void ProcessSupervisor::reap_zombies() {
 }
 
 std::expected<ProcessPipes, std::string> ProcessSupervisor::spawn(
-    const config::ActionConfig& action, const std::unordered_map<std::string, std::string>& env_map) {
+    const config::ActionConfig&                         action,
+    const std::unordered_map<std::string, std::string>& env_map) {
   if (is_running()) kill_all();
 
   int out_pipe[2];
