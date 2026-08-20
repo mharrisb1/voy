@@ -83,7 +83,7 @@ EventType from_inotify_mask(uint32_t mask) noexcept {
   if (mask & IN_ATTRIB) type |= EventType::Attrib;
   if (mask & IN_CLOSE_WRITE) type |= EventType::CloseWrite;
   if (mask & IN_MOVED_FROM) type |= EventType::MovedFrom;
-  if (mask & IN_MOVED_TO) type |= EventType::MovedFrom;
+  if (mask & IN_MOVED_TO) type |= EventType::MovedTo;
   if (mask & IN_DELETE_SELF) type |= EventType::DeleteSelf;
   if (mask & IN_MOVE_SELF) type |= EventType::MoveSelf;
 

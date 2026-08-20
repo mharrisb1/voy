@@ -1,4 +1,5 @@
 #include <voy/config.hpp>
+#include <voy/glob.hpp>
 #include <voy/debounce.hpp>
 #include <voy/engine.hpp>
 #include <voy/event.hpp>
@@ -21,6 +22,8 @@ namespace voy::engine {
 ActionBuilder Action::builder() {
   return ActionBuilder();
 }
+
+ActionBuilder::ActionBuilder() = default;
 
 ActionBuilder& ActionBuilder::with_command(std::string command) {
   config_.command = std::move(command);
@@ -210,6 +213,13 @@ void Engine::run() {
   debouncer_.set_flush_callback(
       [this](std::vector<event::Event> events) { router_.route_events(events); });
 
+  auto debouncer_res = reactor_->add_fd(debouncer_.timer_fd(), [this](int) { debouncer_.on_timer_expired(); });
+  if (!debouncer_res) {
+    std::string err = "[voy] Failed to monitor debouncer timer: " + debouncer_res.error() + "\n";
+    stderr_ring_.push(err);
+    if (on_stderr_) on_stderr_(err);
+  }
+
   auto on_file_event = [this](const event::Event& event) {
     if ((event.raw_inotify_mask & IN_CREATE) && (event.raw_inotify_mask & IN_ISDIR)) {
       watch_tree_.watch_recursively(event.path, event::EventType::All);
@@ -221,8 +231,9 @@ void Engine::run() {
   auto on_sigchld = [this]() { supervisor_.reap_zombies(); };
 
   for (const auto& route : config_.routes) {
-    for (const auto& watch_dir : route.watch) {
-      watch_tree_.watch_recursively(watch_dir, event::EventType::All);
+    for (const auto& watch_glob : route.watch) {
+      std::string base_dir = glob::GlobMatcher::extract_base_dir(watch_glob);
+      watch_tree_.watch_recursively(base_dir, event::EventType::All);
     }
   }
 

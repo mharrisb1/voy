@@ -61,4 +61,16 @@ std::string GlobMatcher::to_regex_string(std::string_view glob) {
   return regex_str;
 }
 
+std::string GlobMatcher::extract_base_dir(std::string_view glob) {
+  size_t first_glob_char = glob.find_first_of("*?");
+  if (first_glob_char == std::string_view::npos) {
+    return std::string(glob);
+  }
+  size_t last_slash = glob.find_last_of('/', first_glob_char);
+  if (last_slash == std::string_view::npos) {
+    return ".";
+  }
+  return std::string(glob.substr(0, last_slash));
+}
+
 }  // namespace voy::glob

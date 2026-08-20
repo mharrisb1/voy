@@ -20,7 +20,7 @@ std::unordered_map<std::string, std::string> Pipeline::prepare_environment(
 
   env["VOY_ROUTE_NAME"] = route.name;
   env["VOY_BATCH_SIZE"] = std::to_string(matched_events.size());
-  env["VOY_EVENT_TYPE"] = event::to_string(event.type);
+  env["VOY_EVENT_TYPE"] = event::to_composite_string(event.type);
   env["VOY_EVENT_TIME"] = std::format("{}", event.timestamp);
   env["VOY_EVENT_PATH"] = abs_path;
 

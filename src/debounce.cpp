@@ -52,7 +52,7 @@ void Debouncer::on_raw_event(const event::Event& event) {
   auto        it       = buffer_.find(path_str);
 
   if (it != buffer_.end()) {
-    it->second.type | event.type;
+    it->second.type |= event.type;
     it->second.raw_inotify_mask |= event.raw_inotify_mask;
     it->second.timestamp = event.timestamp;
   } else {
