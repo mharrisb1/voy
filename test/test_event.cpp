@@ -1,3 +1,16 @@
+/*
+ * markings:managed
+ *
+ * File: test_event.cpp
+ * Copyright (c) 2026 Michael Harris
+ * SPDX-License-Identifier: MIT
+ *
+ * This software is released under the MIT License.
+ * https://opensource.org/licenses/MIT
+ *
+ * markings:managed
+ */
+
 #include <voy/event.hpp>
 
 #include <doctest/doctest.h>

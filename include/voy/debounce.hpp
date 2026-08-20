@@ -1,3 +1,16 @@
+/*
+ * markings:managed
+ *
+ * File: debounce.hpp
+ * Copyright (c) 2026 Michael Harris
+ * SPDX-License-Identifier: MIT
+ *
+ * This software is released under the MIT License.
+ * https://opensource.org/licenses/MIT
+ *
+ * markings:managed
+ */
+
 #pragma once
 
 #include <voy/event.hpp>

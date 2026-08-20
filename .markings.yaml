@@ -1,0 +1,34 @@
+templates:
+  mit: |
+    File: {{ filename }}
+    Copyright (c) {{ year }} {{ .Author }}
+    SPDX-License-Identifier: MIT
+
+    This software is released under the MIT License.
+    https://opensource.org/licenses/MIT
+
+data:
+  Author: Michael Harris
+
+comment_styles:
+  cpp:
+    block:
+      start: "/*\n"
+      middle: " * "
+      end: " */"
+
+rules:
+  - id: cpp-files
+    match: "**/*.{cpp,hpp,h}"
+    header:
+      template: mit
+      newline_after: true
+    comment_style: cpp
+
+exclude:
+  - "**/.git/"
+
+include:
+  - "include/**/*"
+  - "src/**/*"
+  - "test/**/*"

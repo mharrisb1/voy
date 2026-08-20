@@ -1,5 +1,5 @@
 {
-  "debounce_ms": 150,
+  "debounce_ms": 1000,
   "routes": [
     {
       "name": "test_pipeline",
@@ -9,6 +9,15 @@
       "action": {
         "command": "echo '{\"route\": \"'$VOY_ROUTE_NAME'\", \"batch_size\": '$VOY_BATCH_SIZE', \"event_type\":\"'$VOY_EVENT_TYPE'\", \"path\": \"'$VOY_EVENT_PATH'\"}' | jq",
         "workdir": "."
+      }
+    },
+    {
+      "name": "banner_markings",
+      "watch": ["src/**/*.cpp", "include/**/*.hpp", "include/**/*.h"],
+      "ignore": ["build/**"],
+      "events": ["create", "modify"],
+      "action": {
+        "command": "markings fix $VOY_EVENT_PATH"
       }
     }
   ]

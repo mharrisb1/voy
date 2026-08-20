@@ -1,3 +1,16 @@
+/*
+ * markings:managed
+ *
+ * File: watch_tree.cpp
+ * Copyright (c) 2026 Michael Harris
+ * SPDX-License-Identifier: MIT
+ *
+ * This software is released under the MIT License.
+ * https://opensource.org/licenses/MIT
+ *
+ * markings:managed
+ */
+
 #include <voy/event.hpp>
 #include <voy/reactor.hpp>
 #include <voy/watch_tree.hpp>

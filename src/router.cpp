@@ -1,3 +1,16 @@
+/*
+ * markings:managed
+ *
+ * File: router.cpp
+ * Copyright (c) 2026 Michael Harris
+ * SPDX-License-Identifier: MIT
+ *
+ * This software is released under the MIT License.
+ * https://opensource.org/licenses/MIT
+ *
+ * markings:managed
+ */
+
 #include <voy/config.hpp>
 #include <voy/event.hpp>
 #include <voy/router.hpp>
