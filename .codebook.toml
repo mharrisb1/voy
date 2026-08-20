@@ -1,1 +1,10 @@
-words = ["voy", "libvoy", "entr", "watchexec", "globbing", "shader", "ipc"]
+words = [
+  "entr",
+  "globbing",
+  "ipc",
+  "libvoy",
+  "natively",
+  "shader",
+  "voy",
+  "watchexec",
+]
