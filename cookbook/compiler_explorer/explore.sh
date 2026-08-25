@@ -3,7 +3,7 @@ clear
 
 # Configuration
 COMPILER="${COMPILER:-g++}"
-COMPILER_OPTIONS="${COMPILER_OPTIONS:--O0 -fno-asynchronous-unwind-tables -fno-dwarf2-cfi-asm -masm=intel}"
+COMPILER_OPTIONS="${COMPILER_OPTIONS:--std=c++23 -O0 -fno-asynchronous-unwind-tables -fno-dwarf2-cfi-asm -masm=intel}"
 
 FILE="${1:-$VOY_EVENT_PATH}"
 if [ -z "$FILE" ]; then
