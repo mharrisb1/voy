@@ -28,7 +28,7 @@ Voy is a lightweight, embeddable filesystem event pipeline and multi-route orche
 
 ## Installation
 
-Voy requires a C++23 compliant compiler (e.g., GCC 14+ or Clang 18+). You can build and install it using CMake:
+Voy requires a C++23 compliant compiler (e.g., GCC 14+ or Clang 18+). To build and install:
 
 ```bash
 git clone https://github.com/mharrisb1/voy.git
