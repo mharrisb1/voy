@@ -1,0 +1,14 @@
+{
+  "debounce_ms": 50,
+  "routes": [
+    {
+      "name": "compiler_explorer",
+      "watch": ["**/*.cpp"],
+      "events": ["modify"],
+      "action": {
+        "command": "./explore.sh",
+        "workdir": "."
+      }
+    }
+  ]
+}
