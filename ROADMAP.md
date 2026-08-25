@@ -4,6 +4,7 @@ Currently this is more of a to do list than a true roadmap but overtime as the p
 
 ## Features
 
+- [ ] Daemon
 - [ ] Run without a config file. Allow simple configurations to be invoked purely via CLI
 - [ ] Better batching. Currently only the first file event is reported during a debounced window but the user will need a way to see al files changed.
 - [ ] Provide hosted JSON schema
