@@ -33,7 +33,7 @@ Voy requires a C++23 compliant compiler (e.g., GCC 14+ or Clang 18+). You can bu
 ```bash
 git clone https://github.com/mharrisb1/voy.git
 cd voy
-./bin/install.sh
+make install
 ```
 
 ## CLI Usage
@@ -167,3 +167,7 @@ else
   echo "Only $VOY_EVENT_PATH changed, running fast build..."
 fi
 ```
+
+## Roadmap
+
+Everything is still early and subject to major changes but you can find a decent overview of what is coming down the pipe soon in [ROADMAP.md](/ROADMAP.md).
