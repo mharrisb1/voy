@@ -1,5 +1,7 @@
 # Compiler Explorer
 
+![demo](./static/voy__cb__compiler_explorer.gif)
+
 Everyone is familiar with Matt Godbolt's excellent [Compiler Explorer](https://godbolt.org). This Voy recipe shows how to set something similar up locally to explore the compiled assembly from a program.
 
 Run the following:
