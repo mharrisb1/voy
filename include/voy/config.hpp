@@ -16,8 +16,6 @@
 #include <voy/event.hpp>
 
 #include <cstdint>
-#include <expected>
-#include <filesystem>
 #include <functional>
 #include <string>
 #include <unordered_map>
@@ -28,7 +26,7 @@ namespace voy::config {
 using NativeCallback = std::function<void(const std::vector<event::Event>&)>;
 
 struct ActionConfig {
-  std::string                                  command;
+  std::vector<std::string>                     command;
   std::string                                  workdir{"."};
   std::unordered_map<std::string, std::string> env;
   bool                                         pgroup_isolation{true};

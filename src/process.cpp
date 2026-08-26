@@ -17,6 +17,8 @@
 #include <csignal>
 #include <cstdlib>
 #include <cstring>
+#include <iterator>
+#include <numeric>
 #include <print>
 
 #include <fcntl.h>
@@ -96,7 +98,11 @@ std::expected<ProcessPipes, std::string> ProcessSupervisor::spawn(
     const char* shell = std::getenv("SHELL");
     if (!shell || std::strlen(shell) == 0) shell = "/bin/sh";
 
-    execl(shell, shell, "-c", action.command.c_str(), nullptr);
+    auto concat  = [](const std::string& a, const std::string& b) { return a + " " + b; };
+    auto command = std::accumulate(std::next(action.command.begin()), action.command.end(),
+                                   action.command[0], concat);
+
+    execl(shell, shell, "-c", command.c_str(), nullptr);
 
     std::println(stderr, "[voy] Failed to exec {}: {}", shell, strerror(errno));
     _exit(1);

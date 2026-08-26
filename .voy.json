@@ -7,7 +7,7 @@
       "ignore": ["build/**"],
       "events": ["all"],
       "action": {
-        "command": "./bin/log.sh | jq",
+        "command": ["./bin/log.sh", "|", "jq -C"],
         "workdir": "."
       }
     }

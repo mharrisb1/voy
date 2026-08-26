@@ -6,7 +6,7 @@
       "watch": ["**/*.cpp"],
       "events": ["modify"],
       "action": {
-        "command": "./explore.sh",
+        "command": ["./explore.sh"],
         "workdir": "."
       }
     }

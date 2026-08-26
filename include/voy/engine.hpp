@@ -43,7 +43,7 @@ class ActionBuilder {
  public:
   explicit ActionBuilder();
 
-  ActionBuilder& with_command(std::string command);
+  ActionBuilder& with_command(std::vector<std::string> command);
   ActionBuilder& with_workdir(std::string);
   ActionBuilder& set_env(std::string key, std::string value);
   // TODO: add remaining fields

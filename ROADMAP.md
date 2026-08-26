@@ -18,4 +18,4 @@ Currently this is more of a to do list than a true roadmap but overtime as the p
 
 ## Chores
 
-- [ ] Allow command to be a string or array
+- [x] Allow command to be a string or array

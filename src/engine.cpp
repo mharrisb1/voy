@@ -38,7 +38,7 @@ ActionBuilder Action::builder() {
 
 ActionBuilder::ActionBuilder() = default;
 
-ActionBuilder& ActionBuilder::with_command(std::string command) {
+ActionBuilder& ActionBuilder::with_command(std::vector<std::string> command) {
   config_.command = std::move(command);
   return *this;
 }
