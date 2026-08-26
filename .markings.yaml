@@ -27,6 +27,7 @@ rules:
 
 exclude:
   - "**/.git/"
+  - "cookbook/**/*"
 
 include:
   - "include/**/*"
