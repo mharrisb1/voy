@@ -17,55 +17,45 @@
 #include <voy/event.hpp>
 
 #include <expected>
-#include <fstream>
 #include <string>
+#include <vector>
 
-#include <nlohmann/json.hpp>
+#include <glaze/glaze.hpp>
 
-namespace voy::event {
-void from_json(const nlohmann::json& j, EventType& e) {
-  if (j.is_string()) {
-    if (auto type = from_string(j.get<std::string>())) {
-      e = *type;
-      return;
+template <>
+struct glz::meta<voy::config::RouteConfig> {
+  using T = voy::config::RouteConfig;
+
+  // Take the vector by value since from_strings expects a mutable reference
+  static constexpr auto read_events = [](T& s, std::vector<std::string> strings,
+                                         glz::context& ctx) {
+    if (auto type = voy::event::from_strings(strings)) {
+      s.events = *type;
+    } else {
+      ctx.error = glz::error_code::syntax_error;
     }
-  } else if (j.is_array()) {
-    auto strings = j.get<std::vector<std::string>>();
-    if (auto type = from_strings(strings)) {
-      e = *type;
-      return;
-    }
-  }
-  throw nlohmann::json::parse_error::create(0, 0, "Invalid EventType string or array", &j);
-}
-}  // namespace voy::event
+  };
 
-namespace voy::config {
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ActionConfig, command, workdir, env,
-                                                pgroup_isolation, cooldown_ms)
+  static constexpr auto write_events = [](const T& s) {
+    return voy::event::to_composite_string(s.events);
+  };
 
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(RouteConfig, name, watch, ignore, events, action)
-
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(VoyConfig, version, debounce_ms, rootdir, routes)
-}  // namespace voy::config
+  static constexpr auto value =
+      glz::object("name", &T::name, "watch", &T::watch, "ignore", &T::ignore, "events",
+                  glz::custom<read_events, write_events>, "action", &T::action
+                  // callback is intentionally omitted so it stays ignored
+      );
+};
 
 namespace voy::cli {
 
 std::expected<voy::config::VoyConfig, std::string> parse_config_file(const std::string& path) {
-  std::ifstream file(path);
-  if (!file.is_open()) return std::unexpected("Could not open config file: " + path);
+  voy::config::VoyConfig config;
+  std::string            buffer;
 
-  nlohmann::json j;
-  try {
-    file >> j;
-
-    // 3. One line to parse the entire config tree!
-    auto config = j.get<voy::config::VoyConfig>();
-    return config;
-
-  } catch (const nlohmann::json::exception& e) {
-    return std::unexpected("JSON error: " + std::string(e.what()));
-  }
+  auto ec = glz::read_file_json(config, path, buffer);
+  if (ec) return std::unexpected("JSON error: " + glz::format_error(ec, buffer));
+  return config;
 }
 
 }  // namespace voy::cli
