@@ -74,6 +74,7 @@ enable_testing()
 add_executable(voy_tests
   test/test_main.cpp
   test/test_event.cpp
+  test/test_glob.cpp
 )
 
 target_link_libraries(voy_tests

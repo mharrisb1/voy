@@ -3,7 +3,7 @@
   "routes": [
     {
       "name": "compiler_explorer",
-      "watch": ["**/*.cpp"],
+      "watch": ["*.cpp"],
       "events": ["modify"],
       "action": {
         "command": ["./explore.sh"],

@@ -12,6 +12,7 @@
  */
 
 #include <voy/event.hpp>
+#include <voy/glob.hpp>
 #include <voy/reactor.hpp>
 #include <voy/watch_tree.hpp>
 
@@ -28,10 +29,19 @@ void WatchTree::add_ignore_rule(std::string_view glob_pattern) {
   ignore_rules_.emplace_back(glob_pattern);
 }
 
-bool WatchTree::is_ignored(const fs::path& path) const {
-  std::string path_str = path.string();
+bool WatchTree::is_ignored(const fs::path& path, const fs::path& root_dir) const {
+  std::string     path_str;
+  std::error_code ec;
+  auto            abs_path = fs::absolute(path, ec);
+  auto            abs_root = fs::absolute(root_dir, ec);
+  auto            rel      = fs::relative(abs_path, abs_root, ec);
+  if (!ec && !rel.empty())
+    path_str = rel.string();
+  else
+    path_str = path.string();
+
   for (const auto& rule : ignore_rules_) {
-    if (rule.matches(path_str)) return true;
+    if (glob::matches(path_str, rule)) return true;
   }
   return false;
 }
@@ -39,7 +49,7 @@ bool WatchTree::is_ignored(const fs::path& path) const {
 void WatchTree::watch_recursively(const fs::path& root_dir, event::EventType mask) {
   std::error_code ec;
 
-  if (!is_ignored(root_dir)) {
+  if (!is_ignored(root_dir, root_dir)) {
     auto res = reactor_.add_watch(root_dir.string(), mask);
     if (!res) {
       std::println(stderr, "[voy] Warning: Failed to watch directory {}: {}", root_dir.string(),
@@ -66,7 +76,7 @@ void WatchTree::watch_recursively(const fs::path& root_dir, event::EventType mas
     const auto& entry = *it;
 
     if (entry.is_directory(ec)) {
-      if (is_ignored(entry.path())) {
+      if (is_ignored(entry.path(), root_dir)) {
         it.disable_recursion_pending();
       } else {
         auto res = reactor_.add_watch(entry.path().string(), mask);

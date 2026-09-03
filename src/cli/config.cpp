@@ -46,7 +46,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ActionConfig, command, workdir, 
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(RouteConfig, name, watch, ignore, events, action)
 
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(VoyConfig, version, debounce_ms, routes)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(VoyConfig, version, debounce_ms, rootdir, routes)
 }  // namespace voy::config
 
 namespace voy::cli {

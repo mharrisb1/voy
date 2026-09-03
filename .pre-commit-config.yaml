@@ -1,6 +1,6 @@
 repos:
   - repo: https://github.com/mharrisb1/markings
-    rev: v0.2.7
+    rev: v0.3.0
     hooks:
       - id: markings
         types: [text]

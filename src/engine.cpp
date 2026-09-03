@@ -244,13 +244,7 @@ void Engine::run() {
 
   auto on_sigchld = [this]() { supervisor_.reap_zombies(); };
 
-  for (const auto& route : config_.routes) {
-    for (const auto& watch_glob : route.watch) {
-      std::string base_dir = glob::GlobMatcher::extract_base_dir(watch_glob);
-      watch_tree_.watch_recursively(base_dir, event::EventType::All);
-    }
-  }
-
+  watch_tree_.watch_recursively(config_.rootdir, event::EventType::All);
   reactor_->run(on_file_event, on_sigchld);
 }
 
