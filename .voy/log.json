@@ -4,11 +4,9 @@
     {
       "name": "log_event",
       "watch": ["src/**/*.cpp", "include/**/*.hpp", "include/**/*.h"],
-      "ignore": ["build/**"],
       "events": ["all"],
       "action": {
-        "command": ["./bin/log.sh", "|", "jq -C"],
-        "workdir": "."
+        "command": ["./bin/log.sh", "|", "jq -C"]
       }
     }
   ]

@@ -1,0 +1,18 @@
+{
+  "debounce_ms": 150,
+  "routes": [
+    {
+      "name": "run_tests",
+      "watch": [
+        "src/**/*.cpp",
+        "include/**/*.hpp",
+        "include/**/*.h",
+        "test/**/*.cpp"
+      ],
+      "events": ["create", "modify", "delete"],
+      "action": {
+        "command": ["clear", "&&", "make", "test"]
+      }
+    }
+  ]
+}

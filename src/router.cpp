@@ -13,14 +13,16 @@
 
 #include <voy/config.hpp>
 #include <voy/event.hpp>
+#include <voy/glob.hpp>
 #include <voy/router.hpp>
 
+#include <filesystem>
 #include <type_traits>
 #include <utility>
 
 namespace voy::router {
 
-Router::Router(const config::VoyConfig& config) {
+Router::Router(const config::VoyConfig& config) : rootdir_(config.rootdir) {
   compiled_routes_.reserve(config.routes.size());
 
   for (const auto& route_config : config.routes) {
@@ -55,11 +57,19 @@ void Router::route_events(const std::vector<event::Event>& debounced_events) {
 
       if ((event_bits & route_bits) == 0) continue;
 
-      std::string path_str = event.path.string();
+      std::string     path_str;
+      std::error_code ec;
+      auto            abs_path = std::filesystem::absolute(event.path, ec);
+      auto            abs_root = std::filesystem::absolute(rootdir_, ec);
+      auto            rel      = std::filesystem::relative(abs_path, abs_root, ec);
+      if (!ec && !rel.empty())
+        path_str = rel.string();
+      else
+        path_str = event.path.string();
 
       bool ignored = false;
       for (const auto& ignore_glob : route.ignore_globs) {
-        if (ignore_glob.matches(path_str)) {
+        if (glob::matches(path_str, ignore_glob)) {
           ignored = true;
           break;
         }
@@ -69,7 +79,7 @@ void Router::route_events(const std::vector<event::Event>& debounced_events) {
 
       bool watched = false;
       for (const auto& watch_glob : route.watch_globs) {
-        if (watch_glob.matches(path_str)) {
+        if (glob::matches(path_str, watch_glob)) {
           watched = true;
           break;
         }

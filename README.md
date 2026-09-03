@@ -52,7 +52,7 @@ To use Voy from the command line, create a `.voy.json` configuration file in the
       "ignore": ["build/**"],
       "events": ["modify", "create", "delete"],
       "action": {
-        "command": "make build",
+        "command": ["make", "build"],
         "workdir": ".",
         "env": {
           "BUILD_ENV": "development"
@@ -63,18 +63,20 @@ To use Voy from the command line, create a `.voy.json` configuration file in the
 }
 ```
 
-> **Note on Globs:** Voy uses a lightweight, custom glob-to-regex engine.
+> **Note on Globs:** Voy uses a lightweight, custom string matching engine that follows `.gitignore` semantics.
 >
 > **Supported:**
 >
 > - `**` : Recursive directory matching (e.g., `src/**/*.cpp`)
 > - `*` : Any sequence of characters within a single directory (e.g., `src/*.cpp`)
 > - `?` : Any single character (e.g., `test_?.cpp`)
+> - `[...]` : Bracket character classes, including ranges and negation (e.g., `[a-z]*.cpp`, `[!0-9]*`)
+> - Leading `/` : Anchor the match to the root of the project (e.g., `/build/`)
+> - Trailing `/` : Match directories only (e.g., `build/`)
 >
 > **Not Supported (Escaped as literals):**
 >
 > - Brace expansion (e.g., `*.{cpp,hpp}`) - you must specify these as separate watch rules.
-> - Bracket character classes (e.g., `[a-z]*.cpp`).
 > - Extended regex syntax (e.g., `+`, `()`, `|`).
 
 ### Running Voy
@@ -167,7 +169,3 @@ else
   echo "Only $VOY_EVENT_PATH changed, running fast build..."
 fi
 ```
-
-## Roadmap
-
-Everything is still early and subject to major changes but you can find a decent overview of what is coming down the pipe soon in [ROADMAP.md](/ROADMAP.md).

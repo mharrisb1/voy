@@ -15,7 +15,6 @@
 
 #include <voy/config.hpp>
 #include <voy/event.hpp>
-#include <voy/glob.hpp>
 
 #include <functional>
 #include <vector>
@@ -23,9 +22,9 @@
 namespace voy::router {
 
 struct CompiledRoute {
-  const config::RouteConfig*     config_ref;
-  std::vector<glob::GlobMatcher> watch_globs;
-  std::vector<glob::GlobMatcher> ignore_globs;
+  const config::RouteConfig* config_ref;
+  std::vector<std::string>   watch_globs;
+  std::vector<std::string>   ignore_globs;
 };
 
 class Router {
@@ -41,6 +40,7 @@ class Router {
  private:
   std::vector<CompiledRoute> compiled_routes_;
   RouteMatchedCallback       dispatch_bc_;
+  std::string                rootdir_;
 };
 
 }  // namespace voy::router
