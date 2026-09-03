@@ -1,15 +1,17 @@
 .PHONY: all build install test clean format
 
-all: build install
+all: clean install
 
-build:
+build-common:
 	cmake -B build -G Ninja
 
-install: build
+build: build-common
 	cmake --build build --target voy
+	
+install: build
 	sudo cp ./build/voy /usr/local/bin
 
-test: build
+test: build-common
 	cmake --build build --target voy_tests
 	./build/voy_tests
 

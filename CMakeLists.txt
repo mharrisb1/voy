@@ -45,11 +45,12 @@ target_compile_options(voy_lib PRIVATE ${VOY_WARNING_FLAGS})
 include(FetchContent)
 
 FetchContent_Declare(
-  nlohmann_json
-  GIT_REPOSITORY https://github.com/nlohmann/json.git
-  GIT_TAG v3.12.0
+  glaze
+  GIT_REPOSITORY https://github.com/stephenberry/glaze.git
+  GIT_TAG v8.0.0
+  GIT_SHALLOW TRUE
 )
-FetchContent_MakeAvailable(nlohmann_json)
+FetchContent_MakeAvailable(glaze)
 
 add_executable(voy
   src/cli/main.cpp
@@ -59,7 +60,7 @@ add_executable(voy
 target_link_libraries(voy
   PRIVATE
     voy_lib
-    nlohmann_json::nlohmann_json
+    glaze::glaze
 )
 target_compile_options(voy PRIVATE ${VOY_WARNING_FLAGS})
 
