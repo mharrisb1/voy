@@ -1,0 +1,13 @@
+{
+  "debounce_ms": 150,
+  "routes": [
+    {
+      "name": "build",
+      "watch": ["src/**/*.cpp", "include/**/*.hpp", "include/**/*.h"],
+      "events": ["create", "modify", "delete"],
+      "action": {
+        "command": ["clear", "&&", "make", "build"]
+      }
+    }
+  ]
+}

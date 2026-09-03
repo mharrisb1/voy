@@ -3,7 +3,7 @@
   "routes": [
     {
       "name": "log_event",
-      "watch": ["src/**/*.cpp", "include/**/*.hpp", "include/**/*.h"],
+      "watch": ["*.cpp", "*.hpp", "*.h"],
       "events": ["all"],
       "action": {
         "command": ["./bin/log.sh", "|", "jq -C"]
