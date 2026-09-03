@@ -27,13 +27,19 @@ void print_help() {
             << "  watch                 Start the event loop in the foreground\n\n"
             << "Options:\n"
             << "  -c, --config <file>   Path to the JSON config file (default: .voy.json)\n"
+            << "  --no-vcs-ignore       Don't load .gitignore\n"
+            << "  --no-project-ignore   Don't load .ignore\n"
             << "  -h, --help            Print this help and exit\n";
 }
 
 int main(int argc, char** argv) {
-  std::string config_path = ".voy.json";
+  std::string config_path       = ".voy.json";
+  int         no_vcs_ignore     = 0;
+  int         no_project_ignore = 0;
 
   static struct option long_options[] = {{"config", required_argument, nullptr, 'c'},
+                                         {"no-vcs-ignore", no_argument, &no_vcs_ignore, 1},
+                                         {"no-project-ignore", no_argument, &no_project_ignore, 1},
                                          {"help", no_argument, nullptr, 'h'},
                                          {nullptr, 0, nullptr, 0}};
 
@@ -42,6 +48,7 @@ int main(int argc, char** argv) {
 
   while ((opt = getopt_long(argc, argv, "c:h", long_options, &option_index)) != -1) {
     switch (opt) {
+      case 0: break;
       case 'c': config_path = optarg; break;
       case 'h': print_help(); return 0;
       default: print_help(); return 1;
@@ -62,6 +69,9 @@ int main(int argc, char** argv) {
       std::cerr << "[voy] Config Error: " << config_res.error() << "\n";
       return 1;
     }
+
+    if (no_vcs_ignore) config_res->no_vcs_ignore = true;
+    if (no_project_ignore) config_res->no_project_ignore = true;
 
     auto on_stdout = [](std::string_view chunk) {
       std::cout << chunk;

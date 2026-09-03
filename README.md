@@ -81,7 +81,7 @@ To use Voy from the command line, create a `.voy.json` configuration file in the
 
 ### Running Voy
 
-Start the file watcher in the foreground. By default, it looks for a `voy.json` file in the current directory:
+Start the file watcher in the foreground. By default, it looks for a `.voy.json` file in the current directory:
 
 ```bash
 voy watch
@@ -95,7 +95,9 @@ voy -c configs/voy.json watch
 
 **Options:**
 
-- `-c, --config <file>`: Path to the JSON config file (default: `voy.json`)
+- `-c, --config <file>`: Path to the JSON config file (default: `.voy.json`)
+- `--no-vcs-ignore`: Don't load `.gitignore` rules
+- `--no-project-ignore`: Don't load `.ignore` rules
 - `-h, --help`: Print the help message and exit
 
 ## Embedded Usage

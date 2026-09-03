@@ -23,7 +23,8 @@
 #include <voy/watch_tree.hpp>
 
 #include <chrono>
-#include <memory>
+#include <filesystem>
+#include <fstream>
 #include <optional>
 #include <vector>
 
@@ -122,6 +123,17 @@ std::expected<Engine, std::string> EngineBuilder::build() {
   return Engine::create(config_, std::move(on_stdout_), std::move(on_stderr_));
 }
 
+void read_ignore_file(const std::filesystem::path& path, std::vector<std::string>& buf) {
+  std::ifstream file(path);
+  if (!file.is_open()) return;
+  std::string line;
+  while (std::getline(file, line)) {
+    if (!line.empty() && line[0] != '#') {
+      buf.push_back(std::move(line));
+    }
+  }
+}
+
 std::expected<Engine, std::string> Engine::create(const config::VoyConfig&              config,
                                                   std::function<void(std::string_view)> on_stdout,
                                                   std::function<void(std::string_view)> on_stderr) {
@@ -130,6 +142,20 @@ std::expected<Engine, std::string> Engine::create(const config::VoyConfig&      
 
   auto                  reactor_ptr = std::make_unique<reactor::Reactor>(std::move(*reactor_res));
   watch_tree::WatchTree watch_tree(*reactor_ptr);
+
+  if (!config.no_vcs_ignore) {
+    std::vector<std::string> vcs_ignore;
+    read_ignore_file(std::filesystem::path(config.rootdir) / ".gitignore", vcs_ignore);
+    for (const auto& ignore : vcs_ignore)
+      watch_tree.add_ignore_rule(ignore);
+  }
+
+  if (!config.no_project_ignore) {
+    std::vector<std::string> project_ignore;
+    read_ignore_file(std::filesystem::path(config.rootdir) / ".ignore", project_ignore);
+    for (const auto& ignore : project_ignore)
+      watch_tree.add_ignore_rule(ignore);
+  }
 
   for (const auto& route : config.routes) {
     for (const auto& ignore_glob : route.ignore) {

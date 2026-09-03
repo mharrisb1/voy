@@ -21,12 +21,6 @@
 
 namespace voy::router {
 
-struct CompiledRoute {
-  const config::RouteConfig* config_ref;
-  std::vector<std::string>   watch_globs;
-  std::vector<std::string>   ignore_globs;
-};
-
 class Router {
  public:
   using RouteMatchedCallback =
@@ -38,9 +32,9 @@ class Router {
   void route_events(const std::vector<event::Event>& debounced_events);
 
  private:
-  std::vector<CompiledRoute> compiled_routes_;
-  RouteMatchedCallback       dispatch_bc_;
-  std::string                rootdir_;
+  std::vector<config::RouteConfig> routes_;
+  RouteMatchedCallback             dispatch_bc_;
+  std::string                      rootdir_;
 };
 
 }  // namespace voy::router
