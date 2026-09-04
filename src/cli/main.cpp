@@ -26,7 +26,8 @@ void print_help() {
             << "Commands:\n"
             << "  watch                 Start the event loop in the foreground\n\n"
             << "Options:\n"
-            << "  -c, --config <file>   Path to the JSON config file (default: .voy.json)\n"
+            << "  -c, --config <file>   Path to the config file (default: .voy.json)\n"
+            << "  -f, --format <fmt>    Config format (json, toml, yaml) (default: json)\n"
             << "  --no-vcs-ignore       Don't load .gitignore\n"
             << "  --no-project-ignore   Don't load .ignore\n"
             << "  -h, --help            Print this help and exit\n";
@@ -34,10 +35,12 @@ void print_help() {
 
 int main(int argc, char** argv) {
   std::string config_path       = ".voy.json";
+  std::string format_str        = "json";
   int         no_vcs_ignore     = 0;
   int         no_project_ignore = 0;
 
   static struct option long_options[] = {{"config", required_argument, nullptr, 'c'},
+                                         {"format", required_argument, nullptr, 'f'},
                                          {"no-vcs-ignore", no_argument, &no_vcs_ignore, 1},
                                          {"no-project-ignore", no_argument, &no_project_ignore, 1},
                                          {"help", no_argument, nullptr, 'h'},
@@ -46,10 +49,11 @@ int main(int argc, char** argv) {
   int opt;
   int option_index = 0;
 
-  while ((opt = getopt_long(argc, argv, "c:h", long_options, &option_index)) != -1) {
+  while ((opt = getopt_long(argc, argv, "c:f:h", long_options, &option_index)) != -1) {
     switch (opt) {
       case 0: break;
       case 'c': config_path = optarg; break;
+      case 'f': format_str = optarg; break;
       case 'h': print_help(); return 0;
       default: print_help(); return 1;
     }
@@ -64,7 +68,17 @@ int main(int argc, char** argv) {
   std::string command = argv[optind];
 
   if (command == "watch") {
-    auto config_res = voy::cli::parse_config_file(config_path);
+    voy::cli::ConfigFormat format = voy::cli::ConfigFormat::Json;
+    if (format_str == "toml") {
+      format = voy::cli::ConfigFormat::Toml;
+    } else if (format_str == "yaml") {
+      format = voy::cli::ConfigFormat::Yaml;
+    } else if (format_str != "json") {
+      std::cerr << "[voy] Error: Invalid config format '" << format_str << "'\n";
+      return 1;
+    }
+
+    auto config_res = voy::cli::parse_config_file(config_path, format);
     if (!config_res) {
       std::cerr << "[voy] Config Error: " << config_res.error() << "\n";
       return 1;
