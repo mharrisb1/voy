@@ -43,7 +43,6 @@ struct RouteConfig {
 };
 
 struct VoyConfig {
-  uint8_t                  version{1u};
   uint32_t                 debounce_ms{150};
   std::string              rootdir{"."};
   bool                     no_vcs_ignore{false};
