@@ -14,12 +14,15 @@
 #include <voy/process.hpp>
 
 #include <cerrno>
+#include <chrono>
 #include <csignal>
+#include <cstdint>
 #include <cstdlib>
 #include <cstring>
 #include <iterator>
 #include <numeric>
 #include <print>
+#include <thread>
 
 #include <fcntl.h>
 #include <sys/types.h>
@@ -35,14 +38,26 @@ ProcessSupervisor::~ProcessSupervisor() {
 void ProcessSupervisor::kill_all() {
   if (is_running()) {
     if (kill(-pgid_, SIGTERM) == -1) {
-      // TODO: do we need to handle?
+      // TODO
     }
 
     kill(pgid_, SIGCONT);
 
-    int status;
-    waitpid(pgid_, &status, 0);
+    int      status;
+    uint32_t elapsed_ms = 0;
+    bool     exited     = false;
 
+    while (elapsed_ms < grace_period_ms_) {
+      pid_t res = waitpid(pgid_, &status, WNOHANG);
+      if (res == pgid_ || res == -1) {
+        exited = true;
+        break;
+      }
+      std::this_thread::sleep_for(std::chrono::milliseconds(10));
+      elapsed_ms += 10;
+    }
+    kill(-pgid_, SIGKILL);
+    if (!exited) waitpid(pgid_, &status, 0);
     pgid_ = -1;
   }
 }
@@ -60,6 +75,8 @@ std::expected<ProcessPipes, std::string> ProcessSupervisor::spawn(
     const config::ActionConfig&                         action,
     const std::unordered_map<std::string, std::string>& env_map) {
   if (is_running()) kill_all();
+
+  grace_period_ms_ = action.grace_period_ms.value_or(10000);
 
   int out_pipe[2];
   int err_pipe[2];
@@ -111,7 +128,6 @@ std::expected<ProcessPipes, std::string> ProcessSupervisor::spawn(
     close(out_pipe[1]);
     close(err_pipe[1]);
 
-    // Return the read-ends back to the Engine
     return ProcessPipes{out_pipe[0], err_pipe[0]};
   }
 }

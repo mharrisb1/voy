@@ -38,7 +38,7 @@ make install
 
 ## CLI Usage
 
-To use Voy from the command line, create a `.voy.json` (or `.yaml` / `.toml`) configuration file in the root of your project. This file defines the routes and commands you want to execute when files change.
+To use Voy from the command line, create a `.voy.json` (or `.yaml`) configuration file in the root of your project. This file defines the routes and commands you want to execute when files change.
 
 ### Example `.voy.json`
 
@@ -54,6 +54,7 @@ To use Voy from the command line, create a `.voy.json` (or `.yaml` / `.toml`) co
       "action": {
         "command": ["make", "build"],
         "workdir": ".",
+        "grace_period_ms": 2000,
         "env": {
           "BUILD_ENV": "development"
         }
@@ -93,13 +94,24 @@ You can also specify a custom configuration file path using the `--config` flag:
 voy -c configs/voy.json watch
 ```
 
-**Options:**
+**Help (`voy -h`):**
 
-- `-c, --config <file>`: Path to the config file (default: `.voy.json`)
-- `-f, --format <fmt>`: Config format (`json`, `toml`, or `yaml`) (default: `json`)
-- `--no-vcs-ignore`: Don't load `.gitignore` rules
-- `--no-project-ignore`: Don't load `.ignore` rules
-- `-h, --help`: Print the help message and exit
+```
+Usage: voy [OPTIONS] <COMMAND>
+
+Naughty little file watcher
+
+Commands:
+  watch         Start the event loop in the foreground
+
+Options:
+  -h, --help                    Print this help and exit
+  -c, --config <val>            Path to the config file (default: .voy.json)
+  -f, --format <val>            Config format (json, yaml) (default: json)
+  -r, --rootdir <val>           Root directory for watcher (default: .)
+  --no-vcs-ignore               Don't load .gitignore
+  --no-project-ignore           Don't load .ignore
+```
 
 ## Embedded Usage
 

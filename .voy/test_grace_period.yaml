@@ -1,0 +1,13 @@
+routes:
+  - name: "test_grace_period"
+    watch:
+      - "*.cpp"
+    events:
+      - modify
+    action:
+      command:
+        - "bash"
+        - "-c"
+        - "trap 'echo Ignoring SIGTERM...' SIGTERM; echo 'Starting 10s sleep...'; sleep 10"
+      workdir: "."
+      grace_period_ms: 1000

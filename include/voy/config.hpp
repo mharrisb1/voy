@@ -17,6 +17,7 @@
 
 #include <cstdint>
 #include <functional>
+#include <optional>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -29,8 +30,7 @@ struct ActionConfig {
   std::vector<std::string>                     command;
   std::string                                  workdir{"."};
   std::unordered_map<std::string, std::string> env;
-  bool                                         pgroup_isolation{true};
-  uint32_t                                     cooldown_ms{500};
+  std::optional<uint32_t>                      grace_period_ms;
 };
 
 struct RouteConfig {

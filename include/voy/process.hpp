@@ -15,6 +15,7 @@
 
 #include <voy/config.hpp>
 
+#include <cstdint>
 #include <expected>
 #include <string>
 #include <unordered_map>
@@ -42,7 +43,8 @@ class ProcessSupervisor {
   [[nodiscard]] bool is_running() const { return pgid_ != -1; }
 
  private:
-  pid_t pgid_{-1};
+  pid_t    pgid_{-1};
+  uint32_t grace_period_ms_{10000};
 };
 
 }  // namespace voy::process
