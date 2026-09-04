@@ -11,104 +11,63 @@
  * markings:managed
  */
 
-#include <voy/engine.hpp>
-
 #include <iostream>
-#include <string>
+#include <ostream>
 #include <string_view>
 
-#include <getopt.h>
+#include "parser.cpp"
+#include "watch.cpp"
 
-#include "config.hpp"
-
-void print_help() {
-  std::cout << "Usage: voy [options] <command>\n\n"
-            << "Commands:\n"
-            << "  watch                 Start the event loop in the foreground\n\n"
-            << "Options:\n"
-            << "  -c, --config <file>   Path to the config file (default: .voy.json)\n"
-            << "  -f, --format <fmt>    Config format (json, toml, yaml) (default: json)\n"
-            << "  --no-vcs-ignore       Don't load .gitignore\n"
-            << "  --no-project-ignore   Don't load .ignore\n"
-            << "  -h, --help            Print this help and exit\n";
-}
+using namespace voy::cli::parser;
 
 int main(int argc, char** argv) {
-  std::string config_path       = ".voy.json";
-  std::string format_str        = "json";
-  int         no_vcs_ignore     = 0;
-  int         no_project_ignore = 0;
+  auto cli = Command("voy")
+                 .about("Naughty little file watcher")
+                 .arg(Arg("config")
+                          .short_name('c')
+                          .long_name("config")
+                          .default_value(".voy.json")
+                          .help("Path to the config file")
+                          .global(true))
+                 .arg(Arg("format")
+                          .short_name('f')
+                          .long_name("format")
+                          .default_value("json")
+                          .help("Config format (json, toml, yaml)")
+                          .global(true))
+                 .arg(Arg("rootdir")
+                          .short_name('r')
+                          .long_name("rootdir")
+                          .default_value(".")
+                          .help("Root directory for watcher")
+                          .global(true))
+                 .arg(Arg("no-vcs-ignore")
+                          .long_name("no-vcs-ignore")
+                          .action(ArgAction::SetTrue)
+                          .help("Don't load .gitignore")
+                          .global(true))
+                 .arg(Arg("no-project-ignore")
+                          .long_name("no-project-ignore")
+                          .action(ArgAction::SetTrue)
+                          .help("Don't load .ignore")
+                          .global(true))
+                 .subcommand(voy::cli::watch::get_command());
 
-  static struct option long_options[] = {{"config", required_argument, nullptr, 'c'},
-                                         {"format", required_argument, nullptr, 'f'},
-                                         {"no-vcs-ignore", no_argument, &no_vcs_ignore, 1},
-                                         {"no-project-ignore", no_argument, &no_project_ignore, 1},
-                                         {"help", no_argument, nullptr, 'h'},
-                                         {nullptr, 0, nullptr, 0}};
-
-  int opt;
-  int option_index = 0;
-
-  while ((opt = getopt_long(argc, argv, "c:f:h", long_options, &option_index)) != -1) {
-    switch (opt) {
-      case 0: break;
-      case 'c': config_path = optarg; break;
-      case 'f': format_str = optarg; break;
-      case 'h': print_help(); return 0;
-      default: print_help(); return 1;
-    }
-  }
-
-  if (optind >= argc) {
-    std::cerr << "[voy] Error: No command specified.\n\n";
-    print_help();
+  auto parse_res = cli.parse(argc, argv);
+  if (!parse_res) {
+    std::cerr << "[voy] Error: " << parse_res.error() << "\n\n";
+    cli.print_help(std::cerr);
     return 1;
   }
 
-  std::string command = argv[optind];
+  const auto&      matches = *parse_res;
+  std::string_view subcmd  = matches.subcommand_name();
 
-  if (command == "watch") {
-    voy::cli::ConfigFormat format = voy::cli::ConfigFormat::Json;
-    if (format_str == "toml") {
-      format = voy::cli::ConfigFormat::Toml;
-    } else if (format_str == "yaml") {
-      format = voy::cli::ConfigFormat::Yaml;
-    } else if (format_str != "json") {
-      std::cerr << "[voy] Error: Invalid config format '" << format_str << "'\n";
-      return 1;
-    }
-
-    auto config_res = voy::cli::parse_config_file(config_path, format);
-    if (!config_res) {
-      std::cerr << "[voy] Config Error: " << config_res.error() << "\n";
-      return 1;
-    }
-
-    if (no_vcs_ignore) config_res->no_vcs_ignore = true;
-    if (no_project_ignore) config_res->no_project_ignore = true;
-
-    auto on_stdout = [](std::string_view chunk) {
-      std::cout << chunk;
-      std::cout.flush();
-    };
-
-    auto on_stderr = [](std::string_view chunk) {
-      std::cerr << "\033[31m" << chunk << "\033[0m";
-      std::cerr.flush();
-    };
-
-    auto engine_res = voy::engine::Engine::create(*config_res, on_stdout, on_stderr);
-    if (!engine_res) {
-      std::cerr << "[voy] Failed to initialize engine: " << engine_res.error() << "\n";
-      return 1;
-    }
-
-    std::cout << "[voy] Watching for file changes (Config: " << config_path << ")...\n";
-    engine_res->run();
-
-  } else {
-    std::cerr << "[voy] Error: Unknown command '" << command << "'\n\n";
-    print_help();
+  if (subcmd == "watch") {
+    return voy::cli::watch::run(matches, *matches.subcommand_matches());
+  } else if (subcmd.empty()) {
+    std::cerr << "[voy] Error: No command specified.\n\n";
+    cli.print_help(std::cerr);
     return 1;
   }
 

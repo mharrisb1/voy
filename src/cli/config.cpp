@@ -11,19 +11,20 @@
  * markings:managed
  */
 
-#include "config.hpp"
-
+#pragma once
 #include <voy/config.hpp>
 #include <voy/event.hpp>
 
 #include <expected>
-#include <string>
-#include <vector>
+#include <optional>
+#include <string_view>
 
+#include <glaze/core/reflect.hpp>
 #include <glaze/glaze.hpp>
 #include <glaze/toml.hpp>
 #include <glaze/yaml.hpp>
-#include <glaze/yaml/read.hpp>
+
+#include "utils/algorithms.cpp"
 
 template <>
 struct glz::meta<voy::config::RouteConfig> {
@@ -47,25 +48,48 @@ struct glz::meta<voy::config::RouteConfig> {
                   glz::custom<read_events, write_events>, "action", &T::action);
 };
 
-namespace voy::cli {
+namespace voy::cli::config {
+
+struct Format {
+  enum Value { Json, Toml, Yaml };
+  Value value;
+  constexpr Format(Value v) : value(v) {}
+  constexpr                  operator Value() const { return value; }
+  constexpr std::string_view to_string() const {
+    switch (value) {
+      case Json: return "JSON";
+      case Toml: return "TOML";
+      case Yaml: return "YAML";
+      default: return "Unknown";
+    }
+  }
+  static constexpr std::expected<Format, std::string> from_string(std::string_view s) {
+    auto str = voy::cli::utils::algorithms::to_upper(static_cast<std::string>(s));
+    if (str == "JSON") return Format::Json;
+    if (str == "TOML") return Format::Toml;
+    if (str == "YAML") return Format::Yaml;
+    return std::unexpected("invalid format " + static_cast<std::string>(s));
+  }
+};
 
 std::expected<voy::config::VoyConfig, std::string> parse_config_file(const std::string& path,
-                                                                     ConfigFormat       format) {
+                                                                     Format             format) {
   voy::config::VoyConfig config;
   std::string            buffer;
 
   glz::error_ctx ec;
 
   switch (format) {
-    case ConfigFormat::Json: ec = glz::read_file_json(config, path, buffer); break;
-    case ConfigFormat::Toml: ec = glz::read_file_toml(config, path, buffer); break;
-    case ConfigFormat::Yaml: ec = glz::read_file_yaml(config, path, buffer); break;
+    case Format::Json: ec = glz::read_file_json(config, path, buffer); break;
+    case Format::Toml: ec = glz::read_file_toml(config, path, buffer); break;
+    case Format::Yaml: ec = glz::read_file_yaml(config, path, buffer); break;
   }
 
-  if (ec)
-    return std::unexpected(static_cast<std::string>(config_format_to_string(format)) +
-                           " error: " + glz::format_error(ec, buffer));
+  if (ec) {
+    auto format_str = static_cast<std::string>(format.to_string());
+    return std::unexpected(format_str + " error: " + glz::format_error(ec, buffer));
+  }
   return config;
 }
 
-}  // namespace voy::cli
+}  // namespace voy::cli::config

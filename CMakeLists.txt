@@ -54,7 +54,6 @@ FetchContent_MakeAvailable(glaze)
 
 add_executable(voy
   src/cli/main.cpp
-  src/cli/config.cpp
 )
 
 target_link_libraries(voy
