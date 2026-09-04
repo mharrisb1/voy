@@ -19,9 +19,7 @@
 #include <optional>
 #include <string_view>
 
-#include <glaze/core/reflect.hpp>
 #include <glaze/glaze.hpp>
-#include <glaze/toml.hpp>
 #include <glaze/yaml.hpp>
 
 #include "utils/algorithms.cpp"
@@ -51,14 +49,13 @@ struct glz::meta<voy::config::RouteConfig> {
 namespace voy::cli::config {
 
 struct Format {
-  enum Value { Json, Toml, Yaml };
+  enum Value { Json, Yaml };
   Value value;
   constexpr Format(Value v) : value(v) {}
   constexpr                  operator Value() const { return value; }
   constexpr std::string_view to_string() const {
     switch (value) {
       case Json: return "JSON";
-      case Toml: return "TOML";
       case Yaml: return "YAML";
       default: return "Unknown";
     }
@@ -66,7 +63,6 @@ struct Format {
   static constexpr std::expected<Format, std::string> from_string(std::string_view s) {
     auto str = voy::cli::utils::algorithms::to_upper(static_cast<std::string>(s));
     if (str == "JSON") return Format::Json;
-    if (str == "TOML") return Format::Toml;
     if (str == "YAML") return Format::Yaml;
     return std::unexpected("invalid format " + static_cast<std::string>(s));
   }
@@ -81,7 +77,6 @@ std::expected<voy::config::VoyConfig, std::string> parse_config_file(const std::
 
   switch (format) {
     case Format::Json: ec = glz::read_file_json(config, path, buffer); break;
-    case Format::Toml: ec = glz::read_file_toml(config, path, buffer); break;
     case Format::Yaml: ec = glz::read_file_yaml(config, path, buffer); break;
   }
 

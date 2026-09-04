@@ -12,7 +12,6 @@
  */
 
 #include <iostream>
-#include <ostream>
 #include <string_view>
 
 #include "parser.cpp"
@@ -33,7 +32,7 @@ int main(int argc, char** argv) {
                           .short_name('f')
                           .long_name("format")
                           .default_value("json")
-                          .help("Config format (json, toml, yaml)")
+                          .help("Config format (json, yaml)")
                           .global(true))
                  .arg(Arg("rootdir")
                           .short_name('r')

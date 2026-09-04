@@ -128,9 +128,7 @@ void read_ignore_file(const std::filesystem::path& path, std::vector<std::string
   if (!file.is_open()) return;
   std::string line;
   while (std::getline(file, line)) {
-    if (!line.empty() && line[0] != '#') {
-      buf.push_back(std::move(line));
-    }
+    if (!line.empty() && line[0] != '#') buf.push_back(std::move(line));
   }
 }
 
