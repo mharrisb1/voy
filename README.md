@@ -38,7 +38,7 @@ make install
 
 ## CLI Usage
 
-To use Voy from the command line, create a `.voy.json` configuration file in the root of your project. This file defines the routes and commands you want to execute when files change.
+To use Voy from the command line, create a `.voy.json` (or `.yaml` / `.toml`) configuration file in the root of your project. This file defines the routes and commands you want to execute when files change.
 
 ### Example `.voy.json`
 
@@ -95,7 +95,8 @@ voy -c configs/voy.json watch
 
 **Options:**
 
-- `-c, --config <file>`: Path to the JSON config file (default: `.voy.json`)
+- `-c, --config <file>`: Path to the config file (default: `.voy.json`)
+- `-f, --format <fmt>`: Config format (`json`, `toml`, or `yaml`) (default: `json`)
 - `--no-vcs-ignore`: Don't load `.gitignore` rules
 - `--no-project-ignore`: Don't load `.ignore` rules
 - `-h, --help`: Print the help message and exit

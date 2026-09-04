@@ -16,9 +16,22 @@
 #include <voy/config.hpp>
 
 #include <expected>
+#include <string_view>
 
 namespace voy::cli {
 
-std::expected<voy::config::VoyConfig, std::string> parse_config_file(const std::string& path);
+enum class ConfigFormat { Json, Toml, Yaml };
 
+constexpr std::string_view config_format_to_string(ConfigFormat format) {
+  switch (format) {
+    case ConfigFormat::Json: return "JSON";
+    case ConfigFormat::Toml: return "TOML";
+    case ConfigFormat::Yaml: return "YAML";
+    default: return "Unknown";
+  }
 }
+
+std::expected<voy::config::VoyConfig, std::string> parse_config_file(
+    const std::string& path, ConfigFormat format = ConfigFormat::Json);
+
+}  // namespace voy::cli
