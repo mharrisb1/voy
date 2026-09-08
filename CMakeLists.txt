@@ -75,6 +75,7 @@ add_executable(voy_tests
   test/test_main.cpp
   test/test_event.cpp
   test/test_glob.cpp
+  test/test_pipeline.cpp
 )
 
 target_link_libraries(voy_tests
