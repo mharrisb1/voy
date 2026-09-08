@@ -17,7 +17,7 @@ Voy is a lightweight, embeddable filesystem event pipeline and multi-route orche
 | ------------------------------ | --- | -------- | --------- | ---- |
 | Embeddable                     | Yes | No       | Yes       | No   |
 | Foreground Execution           | Yes | No       | Yes       | Yes  |
-| Background Execution           | Yes | Yes      | No        | No   |
+| Background Execution[^1]       | Yes | Yes      | No        | No   |
 | Multi-Route Orchestration      | Yes | Yes      | No        | No   |
 | Built-in Globbing              | Yes | Yes      | Yes       | No   |
 | Environment Variable Injection | Yes | Yes      | Yes       | No   |
@@ -171,16 +171,8 @@ For each process created by Voy, the following environment variables are passed 
 | `VOY_EVENT_TIME` | Original timestamp of the event (ISO)                |
 | `VOY_EVENT_PATH` | Absolute path of file or subdirectory                |
 
-### A Note on Batch Size
+### A Note on Batches
 
-The `VOY_BATCH_SIZE` value is provided because currently we do not support reporting all events in a window through parameters. We need to come up with a good solution for this that avoids potential issues with max environment variable size. Right now, we just report the first event from the observed window but the batch size allows the user to create a script that will do something different if the batch size is larger than one.
+If more than one event is observed and handled within the debounce window then `VOY_EVENT_PATH` will be a delimited list of paths (the system's path separator, `:`, will be used). The `VOY_BATCH_SIZE` will let you know how many events were in the batch. The event types will also be OR'd so that if one path was associated with a `modify` event and another was associated with `created` then the reported `VOY_EVENT_TYPE` will be `modify|created`.
 
-For example something like this:
-
-```bash
-if [ "$VOY_BATCH_SIZE" -gt 1 ]; then
-  echo "Multiple files changed, running full build..."
-else
-  echo "Only $VOY_EVENT_PATH changed, running fast build..."
-fi
-```
+[^1]: https://github.com/mharrisb1/voy/issues/1

@@ -15,10 +15,12 @@
 #include <voy/pipeline.hpp>
 
 #include <format>
+#include <ranges>
+#include <unordered_map>
 
 namespace voy::pipeline {
 
-namespace fs = std::filesystem;
+constexpr char PATH_SEP = ':';
 
 std::unordered_map<std::string, std::string> Pipeline::prepare_environment(
     const config::RouteConfig& route, const std::vector<event::Event>& matched_events) {
@@ -26,16 +28,23 @@ std::unordered_map<std::string, std::string> Pipeline::prepare_environment(
 
   if (matched_events.empty()) return env;
 
-  // NOTE: Just taking the first event for now to hydrate env var params.
-  //       Will need to reconsider in the future.
-  const auto&     event    = matched_events[0];
-  const fs::path& abs_path = event.path;
+  const auto batch_size = static_cast<long>(matched_events.size());
 
   env["VOY_ROUTE_NAME"] = route.name;
-  env["VOY_BATCH_SIZE"] = std::to_string(matched_events.size());
-  env["VOY_EVENT_TYPE"] = event::to_composite_string(event.type);
-  env["VOY_EVENT_TIME"] = std::format("{}", event.timestamp);
-  env["VOY_EVENT_PATH"] = abs_path;
+  env["VOY_BATCH_SIZE"] = std::to_string(batch_size);
+
+  std::string      pathbuf;
+  event::EventType typebuf = event::EventType::None;
+
+  for (const auto& [ix, event] : std::views::enumerate(matched_events)) {
+    pathbuf += event.path;
+    typebuf |= event.type;
+    if (ix == 0) env["VOY_EVENT_TIME"] = std::format("{}", event.timestamp);
+    if (ix < batch_size - 1) pathbuf += PATH_SEP;
+  }
+
+  env["VOY_EVENT_PATH"] = pathbuf;
+  env["VOY_EVENT_TYPE"] = event::to_composite_string(typebuf);
 
   return env;
 }
