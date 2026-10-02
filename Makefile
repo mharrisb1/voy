@@ -7,7 +7,7 @@ build-common:
 
 build: build-common
 	cmake --build build --target voy
-	
+
 install: build
 	sudo cp ./build/voy /usr/local/bin
 
